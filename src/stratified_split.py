@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.model_selection import StratifiedKFold
 from aif360.datasets import BinaryLabelDataset
 
-def stratified_cv_by_class_and_group(dataset: BinaryLabelDataset, n_splits=5, shuffle=True, random_state=None):
+def paired_stratified_cv(dataset: BinaryLabelDataset, n_splits=5, shuffle=True, random_state=None):
     """
     Performs stratified cross-validation by class and sensitive attribute pairs.
 
