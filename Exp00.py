@@ -3,8 +3,8 @@ sys.path.append('src')  # o la ruta relativa a tu módulo
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
+from src import paired_stratified_cv
 from src import describe_protected_and_labels
-
 
 # Cargando un BinaryLabelDataset
 from aif360.datasets import AdultDataset
@@ -36,13 +36,17 @@ s = df[protected_attr].values  # 0 = Female, 1 = Male
 describe_protected_and_labels(dataset)
 
 
+# Extraer etiquetas de clase
+#labels = bld.labels.ravel()
+#protected = bld.protected_attributes.ravel()
+
 # Crear particiones con estratificación por clase
-skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+folds = paired_stratified_cv(dataset, n_splits=5, random_state=42)
 
 
 results = []
 
-for i, (train_idx, test_idx) in enumerate(skf.split(X,y)):
+for i, (train_idx, test_idx) in enumerate(folds):
     y_test = y[test_idx]
     y_train = y[train_idx]
     s_train = s[train_idx]
@@ -88,10 +92,10 @@ for i, (train_idx, test_idx) in enumerate(skf.split(X,y)):
     
     results.append({
         'fold': i + 1,
-        'SPD_train':metric_orig_train.statistical_parity_difference(),
-        'DI_train':metric_orig_train.disparate_impact(),
-        'SPD_train_Reweighing':metric_transf_train.statistical_parity_difference(),
-        'DI_train_Reweighing':metric_transf_train.disparate_impact()
+        'SPD_train_PSCV':metric_orig_train.statistical_parity_difference(),
+        'DI_train_PSCV':metric_orig_train.disparate_impact(),
+        'SPD_train_Reweighing_PSCV':metric_transf_train.statistical_parity_difference(),
+        'DI_train_Reweighing_PSCV':metric_transf_train.disparate_impact()
     })
 
 
