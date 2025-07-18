@@ -1,2 +1,2 @@
-from .stratified_split import stratified_cv_by_class_and_group
+from .stratified_split import paired_stratified_cv
 from .dataset_summary import describe_protected_and_labels
