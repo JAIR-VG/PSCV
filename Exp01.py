@@ -12,14 +12,14 @@ from aif360.datasets import BinaryLabelDataset
 from aif360.metrics import BinaryLabelDatasetMetric, ClassificationMetric
 from aif360.algorithms.preprocessing import Reweighing
 
+col_name='sex'
 
-
-dataset = AdultDataset(protected_attribute_names=['sex'],
+dataset = AdultDataset(protected_attribute_names=[col_name],
                             privileged_classes=[['Male']],
                             features_to_keep=['age', 'education-num'])
 
-privileged_groups = [{'sex': 1}]
-unprivileged_groups = [{'sex': 0}]
+privileged_groups = [{col_name: 1}]
+unprivileged_groups = [{col_name: 0}]
 
 # 2. Convertir a DataFrame
 df, _ = dataset.convert_to_dataframe()
@@ -67,11 +67,11 @@ for i, (train_idx, test_idx) in enumerate(skf.split(X,y)):
     feature_cols = [f'x{i}' for i in range(X.shape[1])]
     df_train = pd.DataFrame(X[train_idx], columns=feature_cols)
     df_train['label'] = y[train_idx]
-    df_train['sex'] = s[train_idx]
+    df_train[col_name] = s[train_idx]
 
     dataset_orig_train = BinaryLabelDataset(df=df_train,
                                             label_names=['label'],
-                                            protected_attribute_names=['sex'])
+                                            protected_attribute_names=[col_name])
     
     metric_orig_train = BinaryLabelDatasetMetric(dataset_orig_train,
                                                  unprivileged_groups=unprivileged_groups,
